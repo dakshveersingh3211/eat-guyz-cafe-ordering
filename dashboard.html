@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>EAT GUYZ CAFE — Order Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #0b0b0b;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+
+        .header {
+            padding: 22px 30px;
+            background: #111;
+            border-bottom: 1px solid #2b2b2b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .brand h1 {
+            font-size: 25px;
+            color: #f5c542;
+            letter-spacing: 1px;
+        }
+
+        .brand p {
+            color: #999;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .live {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6cff8d;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .live-dot {
+            width: 9px;
+            height: 9px;
+            background: #4cff72;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #4cff72;
+        }
+
+        /* MAIN */
+
+        .container {
+            width: min(1400px, 94%);
+            margin: 30px auto;
+        }
+
+        /* STATS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .stat {
+            background: #151515;
+            border: 1px solid #292929;
+            border-radius: 16px;
+            padding: 22px;
+        }
+
+        .stat span {
+            display: block;
+            color: #999;
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+
+        .stat strong {
+            font-size: 30px;
+            color: #f5c542;
+        }
+
+        /* SECTION TITLE */
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .section-title h2 {
+            font-size: 22px;
+        }
+
+        .refresh-text {
+            color: #777;
+            font-size: 12px;
+        }
+
+        /* ORDERS */
+
+        #ordersContainer {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .order-card {
+            background: #151515;
+            border: 1px solid #292929;
+            border-radius: 18px;
+            overflow: hidden;
+            transition: 0.2s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            border-color: #f5c542;
+        }
+
+        .order-top {
+            padding: 18px;
+            border-bottom: 1px solid #292929;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-number {
+            font-size: 21px;
+            font-weight: bold;
+            color: #f5c542;
+        }
+
+        .order-id {
+            color: #777;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+
+        .status {
+            padding: 7px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            background: #242424;
+            color: #f5c542;
+        }
+
+        .order-body {
+            padding: 18px;
+        }
+
+        .items {
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+            margin-bottom: 18px;
+        }
+
+        .item {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            color: #ddd;
+            font-size: 14px;
+        }
+
+        .item-name {
+            max-width: 75%;
+        }
+
+        .item-qty {
+            color: #f5c542;
+            font-weight: bold;
+        }
+
+        .total-row {
+            padding-top: 15px;
+            border-top: 1px solid #292929;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .total-row span {
+            color: #999;
+            font-size: 13px;
+        }
+
+        .total-row strong {
+            color: #f5c542;
+            font-size: 21px;
+        }
+
+        .time {
+            color: #777;
+            font-size: 11px;
+            margin-top: 10px;
+        }
+
+        /* BUTTONS */
+
+        .actions {
+            display: flex;
+            gap: 9px;
+            margin-top: 18px;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 10px;
+            font-weight: bold;
+            cursor: pointer;
+            background: #f5c542;
+            color: #111;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        button.secondary {
+            background: #282828;
+            color: #fff;
+        }
+
+        button.danger {
+            background: #351818;
+            color: #ff8a8a;
+        }
+
+        /* EMPTY */
+
+        .empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 70px 20px;
+            background: #151515;
+            border: 1px dashed #333;
+            border-radius: 18px;
+            color: #777;
+        }
+
+        .empty h3 {
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 1000px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            #ordersContainer {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .header {
+                padding: 18px;
+            }
+
+            .brand h1 {
+                font-size: 20px;
+            }
+
+            .container {
+                width: 92%;
+                margin: 20px auto;
+            }
+
+            .stats {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .stat {
+                padding: 16px;
+            }
+
+            .stat strong {
+                font-size: 24px;
+            }
+
+            #ordersContainer {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="brand">
+        <h1>EAT GUYZ CAFE</h1>
+        <p>LIVE ORDER DASHBOARD</p>
+    </div>
+
+    <div class="live">
+        <span class="live-dot"></span>
+        LIVE
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <!-- STATS -->
+
+    <section class="stats">
+
+        <div class="stat">
+            <span>Total Orders</span>
+            <strong id="totalOrders">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>New Orders</span>
+            <strong id="newOrders">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Preparing</span>
+            <strong id="preparingOrders">0</strong>
+        </div>
+
+        <div class="stat">
+            <span>Ready</span>
+            <strong id="readyOrders">0</strong>
+        </div>
+
+    </section>
+
+
+    <!-- ORDERS -->
+
+    <div class="section-title">
+
+        <h2>Customer Orders</h2>
+
+        <div class="refresh-text">
+            Auto refresh every 2 seconds
+        </div>
+
+    </div>
+
+
+    <section id="ordersContainer">
+
+        <div class="empty">
+            <h3>No orders yet</h3>
+            <p>New customer orders will appear here.</p>
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+let previousOrderCount = 0;
+
+
+// =====================================
+// LOAD ORDERS
+// =====================================
+
+async function loadOrders() {
+
+    try {
+
+        const response = await fetch("/api/orders");
+
+        if (!response.ok) {
+            throw new Error("Failed to load orders");
+        }
+
+        const orders = await response.json();
+
+        renderOrders(orders);
+
+        updateStats(orders);
+
+        // New order notification
+        if (orders.length > previousOrderCount) {
+
+            if (previousOrderCount !== 0) {
+                showNotification();
+            }
+
+        }
+
+        previousOrderCount = orders.length;
+
+    } catch (error) {
+
+        console.error("Dashboard error:", error);
+
+    }
+}
+
+
+// =====================================
+// UPDATE STATISTICS
+// =====================================
+
+function updateStats(orders) {
+
+    document.getElementById("totalOrders").textContent =
+        orders.length;
+
+    document.getElementById("newOrders").textContent =
+        orders.filter(order => order.status === "NEW").length;
+
+    document.getElementById("preparingOrders").textContent =
+        orders.filter(order =>
+            order.status === "PREPARING"
+        ).length;
+
+    document.getElementById("readyOrders").textContent =
+        orders.filter(order =>
+            order.status === "READY"
+        ).length;
+}
+
+
+// =====================================
+// RENDER ORDERS
+// =====================================
+
+function renderOrders(orders) {
+
+    const container =
+        document.getElementById("ordersContainer");
+
+    if (orders.length === 0) {
+
+        container.innerHTML = `
+            <div class="empty">
+                <h3>No orders yet</h3>
+                <p>New customer orders will appear here.</p>
+            </div>
+        `;
+
+        return;
+    }
+
+
+    // Newest orders first
+    const sortedOrders = [...orders].reverse();
+
+
+    container.innerHTML = sortedOrders.map(order => {
+
+        const itemsHTML = order.items.map(item => {
+
+            const quantity =
+                item.quantity || 1;
+
+            const itemTotal =
+                item.price * quantity;
+
+            return `
+                <div class="item">
+
+                    <div class="item-name">
+                        ${escapeHTML(item.name)}
+                    </div>
+
+                    <div class="item-qty">
+                        × ${quantity}
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
+
+
+        return `
+
+            <article class="order-card">
+
+                <div class="order-top">
+
+                    <div>
+
+                        <div class="table-number">
+                            TABLE ${escapeHTML(String(order.table))}
+                        </div>
+
+                        <div class="order-id">
+                            Order #${order.id}
+                        </div>
+
+                    </div>
+
+                    <div class="status">
+                        ${order.status}
+                    </div>
+
+                </div>
+
+
+                <div class="order-body">
+
+                    <div class="items">
+
+                        ${itemsHTML}
+
+                    </div>
+
+
+                    <div class="total-row">
+
+                        <span>Total</span>
+
+                        <strong>
+                            ₹${order.total}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="time">
+                        ${escapeHTML(order.createdAt)}
+                    </div>
+
+
+                    <div class="actions">
+
+                        ${getActionButton(order)}
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        `;
+
+    }).join("");
+}
+
+
+// =====================================
+// ACTION BUTTON
+// =====================================
+
+function getActionButton(order) {
+
+    if (order.status === "NEW") {
+
+        return `
+            <button onclick="updateStatus(${order.id}, 'ACCEPTED')">
+                ACCEPT ORDER
+            </button>
+        `;
+
+    }
+
+
+    if (order.status === "ACCEPTED") {
+
+        return `
+            <button onclick="updateStatus(${order.id}, 'PREPARING')">
+                START PREPARING
+            </button>
+        `;
+
+    }
+
+
+    if (order.status === "PREPARING") {
+
+        return `
+            <button onclick="updateStatus(${order.id}, 'READY')">
+                ORDER READY
+            </button>
+        `;
+
+    }
+
+
+    if (order.status === "READY") {
+
+        return `
+            <button onclick="updateStatus(${order.id}, 'COMPLETED')">
+                MARK COMPLETED
+            </button>
+        `;
+
+    }
+
+
+    if (order.status === "COMPLETED") {
+
+        return `
+            <button
+                class="danger"
+                onclick="deleteOrder(${order.id})">
+                REMOVE ORDER
+            </button>
+        `;
+
+    }
+
+    return "";
+
+}
+
+
+// =====================================
+// UPDATE STATUS
+// =====================================
+
+async function updateStatus(orderId, status) {
+
+    try {
+
+        const response = await fetch(
+            `/api/orders/${orderId}/status`,
+            {
+                method: "PATCH",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    status: status
+                })
+            }
+        );
+
+
+        const result =
+            await response.json();
+
+
+        if (!result.success) {
+
+            alert(
+                result.message ||
+                "Could not update order."
+            );
+
+            return;
+        }
+
+
+        loadOrders();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Server connection error."
+        );
+
+    }
+
+}
+
+
+// =====================================
+// DELETE ORDER
+// =====================================
+
+async function deleteOrder(orderId) {
+
+    const confirmDelete =
+        confirm(
+            "Remove this completed order?"
+        );
+
+
+    if (!confirmDelete) {
+        return;
+    }
+
+
+    try {
+
+        const response = await fetch(
+            `/api/orders/${orderId}`,
+            {
+                method: "DELETE"
+            }
+        );
+
+
+        const result =
+            await response.json();
+
+
+        if (!result.success) {
+
+            alert(
+                result.message ||
+                "Could not remove order."
+            );
+
+            return;
+        }
+
+
+        loadOrders();
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Server connection error."
+        );
+
+    }
+
+}
+
+
+// =====================================
+// NEW ORDER NOTIFICATION
+// =====================================
+
+function showNotification() {
+
+    try {
+
+        const sound =
+            new Audio(
+                "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA="
+            );
+
+        sound.play().catch(() => {});
+
+    } catch (error) {}
+
+}
+
+
+// =====================================
+// HTML SECURITY
+// =====================================
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// =====================================
+// AUTO REFRESH
+// =====================================
+
+loadOrders();
+
+setInterval(
+    loadOrders,
+    2000
+);
+
+</script>
+
+</body>
+</html>
